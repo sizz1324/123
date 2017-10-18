@@ -11,11 +11,11 @@
 			button.button.primary(@click="newPost")
 				span.icon
 					i.fa.fa-plus
-				span {{ _("NewPost") }}
+				span {{ _("새포스트얌") }}
 
 			.group.filter
 				a.link(@click="changeViewMode('all')", :class="{ active: viewMode == 'all' }") {{ _("AllPosts") }}
-				a.link(@click="changeViewMode('my')", :class="{ active: viewMode == 'my' }") {{ _("MyPosts") }}
+				a.link(@click="changeViewMode('my')", :class="{ active: viewMode == 'my' }") {{ _("MyPosts내포스트") }}
 
 		.postForm(v-if="showForm")
 			vue-form-generator(:schema='schema', :model='model', :options='{}', :multiple="false", ref="form", :is-new-model="isNewPost")
@@ -205,6 +205,7 @@
 					return voters;
 				}
 				return [];
+				
 			},
 
 			createdAgo(post) {

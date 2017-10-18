@@ -6,30 +6,36 @@ let C = require("../../../core/constants");
 
 let _ = require("lodash");
 
-let Device = require("./models/device");
+let Moneyflow = require("./models/moneyflow");
 
 module.exports = {
     settings: {
-        name: "devices",
+        name: "moneyflows",
         version: 1,
-        namespace: "devices",
+        namespace: "moneyflows",
         rest: true,
         ws: true,
         graphql: false,
         permission: C.PERM_LOGGEDIN,
         role: "user",
-        collection: Device,
+        collection: Moneyflow,
 
-        modelPropFilter: "code type address name description status lastCommunication createdAt updatedAt"
+        // modelPropFilter: "code type address name description status lastCommunication createdAt updatedAt amount"
     },
 
     actions: {
+        me(ctx) {
+            return Promise.resolve(ctx.model).then((doc) => {
+                return personService.toJSON(doc);
+            });
+        },
+
         find: {
             cache: true,
             handler(ctx) {
                 let filter = {};
 
-                let query = Device.find(filter);
+                let query = Moneyflow.find(filter);
                 return ctx.queryPageSort(query).exec().then((docs) => {
                     return this.toJSON(docs);
                 });
@@ -40,7 +46,7 @@ module.exports = {
         get: {
             cache: true,
             handler(ctx) {
-                ctx.assertModelIsExist(ctx.t("app:DeviceNotFound"));
+                ctx.assertModelIsExist(ctx.t("app:MoneyflowNotFound"));
                 return Promise.resolve(ctx.model);
             }
         },
@@ -48,15 +54,18 @@ module.exports = {
         create(ctx) {
             this.validateParams(ctx, true);
 
-            let device = new Device({
-                address: ctx.params.address,
+            let moneyflow = new Moneyflow({
                 type: ctx.params.type,
-                name: ctx.params.name,
+                moneytype: ctx.params.moneytype,
+                gametype: ctx.params.gametype,
                 description: ctx.params.description,
-                status: ctx.params.status
+                status: ctx.params.status,
+                amount: ctx.params.amount,
+                sumamount: ctx.params.sumamount,
+                site: ctx.params.site
             });
 
-            return device.save()
+            return moneyflow.save()
                 .then((doc) => {
                     return this.toJSON(doc);
                 })
@@ -70,7 +79,7 @@ module.exports = {
         },
 
         update(ctx) {
-            ctx.assertModelIsExist(ctx.t("app:DeviceNotFound"));
+            ctx.assertModelIsExist(ctx.t("app:MoneyflowNotFound"));
             this.validateParams(ctx);
 
             return this.collection.findById(ctx.modelID).exec()
@@ -106,9 +115,9 @@ module.exports = {
         },
 
         remove(ctx) {
-            ctx.assertModelIsExist(ctx.t("app:DeviceNotFound"));
+            ctx.assertModelIsExist(ctx.t("app:MoneyflowNotFound"));
 
-            return Device.remove({ _id: ctx.modelID })
+            return Moneyflow.remove({ _id: ctx.modelID })
                 .then(() => {
                     return ctx.model;
                 })
@@ -129,15 +138,15 @@ module.exports = {
          * @param {boolean} strictMode 		strictMode. If true, need to exists the required parameters
          */
         validateParams(ctx, strictMode) {
-            if (strictMode || ctx.hasParam("name"))
-                ctx.validateParam("name").trim().notEmpty(ctx.t("app:DeviceNameCannotBeBlank")).end();
+            // if (strictMode || ctx.hasParam("name"))
+            //     ctx.validateParam("name").trim().notEmpty(ctx.t("app:MoneyflowNameCannotBeBlank")).end();
 
             if (strictMode || ctx.hasParam("status"))
                 ctx.validateParam("status").isNumber();
 
-            ctx.validateParam("description").trim().end();
-            ctx.validateParam("address").trim().end();
-            ctx.validateParam("type").trim().end();
+            // ctx.validateParam("description").trim().end();
+            // ctx.validateParam("address").trim().end();
+            // ctx.validateParam("type").trim().end();
 
             if (ctx.hasValidationErrors())
                 throw ctx.errorBadRequest(C.ERR_VALIDATION_ERROR, ctx.validationErrors);
@@ -152,94 +161,6 @@ module.exports = {
         afterConnection(socket, io) {
             // Fired when a new client connected via websocket
         }
-    },
-
-    graphql: {
-
-        query: `
-			devices(_id: Int, limit: Int, offset: Int, sort: String, code: String): [Device]
-			device(code: String): Device
-		`,
-
-        types: `
-			type Device {
-                _id: Int!
-				code: String!
-				address: String
-                type: String
-                createdAt: String
-                updatedAt: String
-                
-			}
-		`,
-
-        mutation: `
-			deviceCreate(name: String!, address: String, type: String, description: String, status: Int): Device
-			deviceUpdate(code: String!, name: String, address: String, type: String, description: String, status: Int): Device
-			deviceRemove(code: String!): Device
-		`,
-
-        resolvers: {
-            Query: {
-                devices: "find",
-                device: "get"
-            },
-
-            Mutation: {
-                deviceCreate: "create",
-                deviceRemove: "remove"
-            }
-        }
     }
 
 };
-
-/*
-## GraphiQL test ##
-
-# Find all devices
-query getDevices {
-  devices(sort: "lastCommunication", limit: 5) {
-    ...deviceFields
-  }
-}
-
-# Create a new device
-mutation createDevice {
-  deviceCreate(name: "New device", address: "192.168.0.1", type: "raspberry", description: "My device", status: 1) {
-    ...deviceFields
-  }
-}
-
-# Get a device
-query getDevice($code: String!) {
-  device(code: $code) {
-    ...deviceFields
-  }
-}
-
-# Update an existing device
-mutation updateDevice($code: String!) {
-  deviceUpdate(code: $code, address: "127.0.0.1") {
-    ...deviceFields
-  }
-}
-
-# Remove a device
-mutation removeDevice($code: String!) {
-  deviceRemove(code: $code) {
-    ...deviceFields
-  }
-}
-
-fragment deviceFields on Device {
-    code
-    address
-    type
-    name
-    description
-    status
-    lastCommunication
-}
-
-*/

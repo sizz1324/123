@@ -4,7 +4,7 @@
 			img.avatar(:src="profile.avatar")
 			
 			.details.flex-item-1
-				.name {{ profile.fullName }}
+				.name {{ profile.fullName }} 미풀네임  
 					span.text-muted.username ({{ profile.username }})
 
 				.tags
@@ -29,18 +29,20 @@
 
 				hr.full
 		pre(v-html="this.$options.filters.prettyJSON(profile)")
+		pre(v-html="profile")
 
 </template>
 
 <script>
+
 	import Service from "../../core/service";
 
 	import { mapGetters, mapActions } from "vuex";
-
 	export default {
 		computed: mapGetters("profile", [
 			"profile"
 		]),
+
 
 		methods: {
 			...mapActions("profile", [
@@ -49,7 +51,8 @@
 		},
 
 		created() {
-			this.$service = new Service("profile", this); 
+			this.$service = new Service("session", this); 
+			console.log('로그4$$$:', this.$service);
 			
 			// Get my profile
 			this.getProfile(); 

@@ -26,11 +26,26 @@
 						span.icon
 							i.fa.fa-comments
 						span.label {{ "Posts" | i18n }}
+				router-link(tag="li", to="/moneyflows")
+					a(:title="_('Moneyflow')")
+						span.icon
+							i.fa.fa-comments
+						span.label {{ "머니" | i18n }}
+				router-link(tag="li", to="/charge")
+					a(:title="_('Charge')")
+						span.icon
+							i.fa.fa-comments
+						span.label {{ "차지" | i18n }}
+				router-link(tag="li", to="/exchange")
+					a(:title="_('Exchange')")
+						span.icon
+							i.fa.fa-comments
+						span.label {{ "익스체인지" | i18n }}
 
 			.title {{ "Profile" | i18n }}
 			ul
 				li
-					a(href="/logout", :title="_('Logout')")
+					a(href="/", :title="_('Logout')")
 						span.icon
 							i.fa.fa-sign-out
 						span.label {{ "Logout" | i18n }}

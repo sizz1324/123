@@ -25,6 +25,10 @@ block content
 						label(for='username')= t("UsernameSC")
 						input(type='text', name='username', id='username', placeholder=t("YourUsername"))
 						.hint
+					.form-group
+						label(for='bank')= t("bankSC")
+						input(type='text', name='bank', id='bank', placeholder=t("너의은행rbank"))
+						.hint
 					.form-group.switch
 						div= t("PasswordlessAccount")
 						input(type='checkbox', name='passwordless', id='passwordless')
@@ -46,7 +50,7 @@ block content
 									div= info.msg
 
 					.form-group
-						button.signup(type='submit')= t("SignUp")
+						button.signup(type='submit')= t("SignUp 티함수")
 
 					if socialAuth
 						.or

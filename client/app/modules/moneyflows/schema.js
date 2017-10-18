@@ -1,6 +1,6 @@
 import Vue from "vue";
 import moment from "moment";
-import { deviceTypes } from "./types";
+import { moneyflowTypes } from "./types";
 import { validators } from "vue-form-generator";
 
 import { find } from "lodash";
@@ -9,13 +9,13 @@ let _ = Vue.prototype._;
 
 module.exports = {
 
-    id: "devices",
-    title: _("Devices"),
+    id: "moneyflows",
+    title: _("머니플스키마타이틀"),
 
     table: {
         multiSelect: true,
         columns: [{
-                title: _("ID22"),
+                title: _("ID"),
                 field: "code",
                 align: "right",
                 formatter(value, model) {
@@ -27,7 +27,7 @@ module.exports = {
                 field: "type",
                 align: "right",
                 formatter(value) {
-                    let type = find(deviceTypes, (type) => type.id == value);
+                    let type = find(moneyflowTypes, (type) => type.id == value);
                     return type ? type.name : value;
                 }
             },
@@ -84,7 +84,7 @@ module.exports = {
                 label: _("Type"),
                 model: "type",
                 required: true,
-                values: deviceTypes,
+                values: moneyflowTypes,
                 default: "rasperry",
                 validator: validators.required
 

@@ -1,20 +1,20 @@
 const state = {
-	count: 0
+    count: 23
 };
 
 const mutations = {
-	["CHANGED_VALUE"](state, newValue) {
-		state.count = newValue;
-	}
+    ["CHANGED_VALUE"](state, newValue) {
+        state.count = newValue;
+    }
 };
 
 import * as getters from "./getters";
 import * as actions from "./actions";
 
 export default {
-	namespaced: true,
-	state,
-	getters,
-	actions,
-	mutations
+    namespaced: true,
+    state,
+    getters,
+    actions,
+    mutations
 };

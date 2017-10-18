@@ -7,7 +7,7 @@ let logger = require("../../../../core/logger");
 let db = require("../../../../core/mongo");
 let mongoose = require("mongoose");
 let Schema = mongoose.Schema;
-let hashids = require("../../../../libs/hashids")("devices");
+let hashids = require("../../../../libs/hashids")("moneyflows");
 let autoIncrement = require("mongoose-auto-increment");
 
 let schemaOptions = {
@@ -20,8 +20,8 @@ let schemaOptions = {
     }
 };
 
-let DeviceSchema = new Schema({
-    address: {
+let MoneyflowSchema = new Schema({
+    moneytype: {
         type: String,
         trim: true
     },
@@ -29,7 +29,7 @@ let DeviceSchema = new Schema({
         type: String,
         trim: true
     },
-    name: {
+    gametype: {
         type: String,
         trim: true
     },
@@ -40,37 +40,42 @@ let DeviceSchema = new Schema({
     },
     status: {
         type: Number,
-        "default": 1
+        "default": 0
     },
     lastCommunication: {
         type: Date,
         "default": Date.now
     },
     amount: {
-        type: Number,
-        "default": 20001
+        type: Number
+    },
+    sumamount: {
+        type: Number
+    },
+    site: {
+        type: String
     },
     metadata: {}
 
 }, schemaOptions);
 
-DeviceSchema.virtual("code").get(function() {
+MoneyflowSchema.virtual("code").get(function() {
     return this.encodeID();
 });
 
-DeviceSchema.plugin(autoIncrement.plugin, {
-    model: "Device",
+MoneyflowSchema.plugin(autoIncrement.plugin, {
+    model: "Moneyflow",
     startAt: 1
 });
 
-DeviceSchema.methods.encodeID = function() {
+MoneyflowSchema.methods.encodeID = function() {
     return hashids.encodeHex(this._id);
 };
 
-DeviceSchema.methods.decodeID = function(code) {
+MoneyflowSchema.methods.decodeID = function(code) {
     return hashids.decodeHex(code);
 };
 
-let Device = mongoose.model("Device", DeviceSchema);
+let Moneyflow = mongoose.model("Moneyflow", MoneyflowSchema);
 
-module.exports = Device;
+module.exports = Moneyflow;

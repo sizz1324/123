@@ -1,53 +1,52 @@
 "use strict";
 
-let logger 		= require("../../../core/logger");
-let config 		= require("../../../config");
-let C 	 		= require("../../../core/constants");
+let logger = require("../../../core/logger");
+let config = require("../../../config");
+let C = require("../../../core/constants");
 
-let _			= require("lodash");
+let _ = require("lodash");
 
-let User 		= require("./models/user");
+let User = require("./models/user");
 
 module.exports = {
-	settings: {
-		name: "profile",
-		version: 1,
-		namespace: "profile",
-		rest: true,
-		ws: true,
-		graphql: true,
-		permission: C.PERM_LOGGEDIN,
-		role: "user",
-		collection: User,
+    settings: {
+        name: "profile",
+        version: 1,
+        namespace: "profile",
+        rest: true,
+        ws: true,
+        graphql: false,
+        permission: C.PERM_LOGGEDIN,
+        role: "user",
+        collection: User
 
-		modelPropFilter: "code username fullName email avatar passwordLess provider profile socialLinks roles apiKey lastLogin locale status createdAt updatedAt"
-	},
-	
-	actions: {
-		// return my profile with all properties
-		get: {
-			cache: false, // can't be cached, because it is unique for every account
-			handler(ctx) {
-				return User.findById(User.schema.methods.decodeID(ctx.user.code)).exec().then( (doc) => {
-					return this.toJSON(doc);
-				})
-				.then((json) => {
-					return this.populateModels(json);
-				});
-			}
-		}
-	},
+        // modelPropFilter: "code username fullName email avatar passwordLess provider profile socialLinks roles apiKey lastLogin locale status createdAt updatedAt"
+    },
 
-	methods: {
-	},
+    actions: {
+        // return my profile with all properties
+        get: {
+            cache: false, // can't be cached, because it is unique for every account
+            handler(ctx) {
+                return User.findById(User.schema.methods.decodeID(ctx.user.code)).exec().then((doc) => {
+                        return this.toJSON(doc);
+                    })
+                    .then((json) => {
+                        return this.populateModels(json);
+                    });
+            }
+        }
+    },
 
-	graphql: {
+    methods: {},
 
-		query: `
+    graphql: {
+
+        query: `
 			profile: Profile
 		`,
 
-		types: `
+        types: `
 			type Profile {
 				code: String!
 				fullName: String
@@ -58,6 +57,7 @@ module.exports = {
 				profile: SocialProfile
 				socialLinks: SocialLinks
 				roles: [String]
+				blockgames: [String]
 				verified: Boolean
 				apiKey: String
 				locale: String
@@ -66,6 +66,7 @@ module.exports = {
 				updatedAt: Timestamp
 				lastLogin: Timestamp
 				status: Boolean
+
 			}
 
 			type SocialProfile {
@@ -81,17 +82,17 @@ module.exports = {
 				google: String
 				github: String
 			}
-		`,		
-
-		mutation: `
 		`,
 
-		resolvers: {
-			Query: {
-				profile: "get"
-			}
-		}
-	}
+        mutation: `
+		`,
+
+        resolvers: {
+            Query: {
+                profile: "get"
+            }
+        }
+    }
 
 };
 

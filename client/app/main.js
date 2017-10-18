@@ -15,6 +15,13 @@ import VueWebsocket from "vue-websocket";
 import store from "./core/store";
 import App from "./core/App";
 
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-default/index.css';
+import locale from 'element-ui/lib/locale/lang/ko';
+
+Vue.use(ElementUI, { locale });
+
+
 Vue.use(Filters);
 
 Vue.use(VueFormGenerator);
@@ -25,15 +32,15 @@ Vue.use(VueWebsocket);
 // Register i18next localization module. We need to 
 // wait it before start the application!
 Vue.use(VueI18Next, (i18next) => {
-	let router = require("./core/router").default; // Load only after i18next initialized
+    let router = require("./core/router").default; // Load only after i18next initialized
 
-	new Vue({
-		el: "#app",
-		components: {
-			App
-		},
-		router,
-		store,
-		render: h => h("app")
-	});
+    new Vue({
+        el: "#app",
+        components: {
+            App
+        },
+        router,
+        store,
+        render: h => h("app")
+    });
 });

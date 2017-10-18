@@ -3,7 +3,7 @@
 	
 		.user-info.right(@click="toggleUserMenu()")
 			img.avatar(:src='me.avatar')
-			.username {{ me.fullName }}
+			.username level : {{me.level}} nickname : {{ me.fullName }} money : {{ me.money.cash }} 
 			i.fa.fa-chevron-down
 
 		user-dropdown(:visible="expandedUserMenu")
@@ -31,15 +31,13 @@
 	import NotificationsDropdown from "./dropdowns/notifications";
 	import MessagesDropdown from "./dropdowns/messages";
 
-	import { mapActions, mapGetters } from "vuex";
-
+	import { mapActions, mapGetters } from "vuex"; 
 	export default {
 		computed: mapGetters("session", [
 			"me",
 			"notifications",
 			"messages"
 		]),
-
 		components: {
 			UserDropdown,
 			NotificationsDropdown,
@@ -80,6 +78,9 @@
 				}
 			}
 
+		},
+		created(){
+			
 		}
 
 	};

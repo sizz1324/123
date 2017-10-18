@@ -5,7 +5,7 @@
 		.flex.align-center.justify-space-around
 			.left(v-if="enabledNew")
 				button.button.is-primary(@click="newModel")
-					i.icon.fa.fa-plus 뉴모델
+					i.icon.fa.fa-plus 차지 익스체인지 
 					| {{ schema.resources.addCaption || _("Add") }}
 			.right {{ _("SelectedOfAll", { selected: selected.length, all: rows.length } ) }}
 		.form(v-if="model")
@@ -16,21 +16,34 @@
 					strong {{ item.error }}
 
 			.buttons.flex.justify-space-around
-				button.button.primary(@click="saveModel", :disabled="!enabledSave")
+				button.button.primary(@click="saveModel")  
 					i.icon.fa.fa-save 
 					| {{  _("Save디폴어드민") }}
-				button.button.outline(@click="cloneModel", :disabled="!enabledClone")
+				button.button.outline(@click="cloneModel" )
 					i.icon.fa.fa-copy 
 					| {{ schema.resources.cloneCaption || _("Clone") }}
-				button.button.danger(@click="deleteModel", :disabled="!enabledDelete")
+				button.button.danger(@click="deleteModel")
 					i.icon.fa.fa-trash 
 					| {{ schema.resources.deleteCaption || _("Delete") }}
 				button.button.primary(@click="closemodel")
 					i.icon.fa.fa-close 
-					| {{  _("닫기") }}{{me.id}}
+					| {{  _("닫기") }}
+				button.button.primary(@click="this.$parent.downloadRows2")
+					i.icon.fa.fa-close 
+					| {{  _("부모호출") }}
+					
 		data-table(:schema="schema.table", :rows="rows", :order="order", :search="search", :selected="selected", :select="select", :select-all="selectAll")
+ 
+		div
+			image-modal(:visible='visible', @close='close', transition='roll')
+				p.image.is-4by3
+				img(src='http://placehold.it/1280x960')
+		.tile.is-parent.is-4
+			article.tile.is-child.box
+				h1.title Image
+				a.button.is-primary.is-large.modal-button(@click='openModalImage') Launch image modal
+ 
 
-		
 
 </template>
 
@@ -43,16 +56,35 @@
 
 	import { mapGetters, mapActions } from "vuex";
 
+	import { Modal, ImageModal, CardModal } from 'vue-bulma-modal'
+
+	const ImageModalComponent = Vue.extend(ImageModal) 
+
+	const openImageModal = (propsData = {
+	visible: true
+	}) => {
+	return new ImageModalComponent({
+		el: document.createElement('div'),
+		propsData
+	})
+	}
+
 	export default {
 
 		components: {
-			DataTable
+			DataTable,
+			Modal,
+			ImageModal,
+			CardModal
 		},
 
 		props: [
 			"schema",
 			"selected",
-			"rows"
+			"rows",
+			"visible"
+
+			
 		],
 
 		data() {
@@ -63,14 +95,16 @@
 				},
 
 				model: null,
-				isNewModel: false
+				isNewModel: false,
+				showModal: true,
+				cardModal: null,
+				imageModal: null
 			};
 		},
 
 		computed: {
 			...mapGetters("session", {
-				search: "searchText",
-				me : "me"
+				search: "searchText"
 			}),
 
 			options() 		{ return this.schema.options || {};	},
@@ -104,8 +138,7 @@
 			}*/
 		},
 
-		methods: {
-
+		methods: { 
 			select(event, row, add) {
 				this.isNewModel = false;
 				
@@ -176,18 +209,25 @@
 			},
 
 			saveModel() {
-				console.log("Save model...");
-				if (this.options.validateBeforeSave === false ||  this.validate()) {
+				this.$confirm('삭제할그냐?', 'ok', {
+					type: 'warning'
+				}).then(() => {
+					if (this.options.validateBeforeSave === false || this.validate()) {
 
-					if (this.isNewModel){
-						console.log('로그thismodel:', this.model);
-						this.$parent.saveRow(this.model);
-					}else
-						this.$parent.updateRow(this.model);
+						if (this.isNewModel)
+							this.$parent.saveRow(this.model);
+						else
+							this.$parent.updateRow(this.model);
 
-				} else {
-					// Validation error
-				}
+					} else {
+						// Validation error
+					}
+				}).catch(() => {
+
+				});
+
+
+				
 			},
 
 			deleteModel() {
@@ -214,12 +254,22 @@
 				}
 
 				return res;	
-			}
+			},
+
+			openModalImage () {
+				const imageModal = this.imageModal || (this.imageModal = openImageModal())
+				imageModal.$children[0].active()
+			},
+		
+			close () {
+			this.$emit('close')
+			} 
 
 		},
 
-		created() {
-		}	
+		created() { 
+			this.newModel();
+		} 
 				
 	};
 
