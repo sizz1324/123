@@ -35,11 +35,11 @@ let validateLocalStrategyPassword = function(password) {
 };
 
 let UserSchema = new Schema({
-    fullName: {
+    nickname: {
         type: String,
         trim: true,
         "default": "",
-        validate: [validateLocalStrategyProperty, "Please fill in your full name"]
+        validate: [validateLocalStrategyProperty, "Please fill in your 닉 name"]
     },
     email: {
         type: String,
@@ -65,29 +65,16 @@ let UserSchema = new Schema({
         "default": "",
         validate: [validateLocalStrategyPassword, "Password should be longer"]
     },
-    provider: {
-        type: String,
-        "default": "local"
-    },
     roles: {
         type: [{
             type: String,
             "enum": [
                 C.ROLE_ADMIN,
                 C.ROLE_USER,
-                C.ROLE_GUEST
+                C.ROLE_STAFF1
             ]
         }],
         "default": [C.ROLE_USER]
-    },
-    resetPasswordToken: String,
-    resetPasswordExpires: Date,
-    verified: {
-        type: Boolean,
-        default: false
-    },
-    verifyToken: {
-        type: String
     },
     apiKey: {
         type: String,
@@ -132,18 +119,18 @@ let UserSchema = new Schema({
 
     bank: {
         name: {
-            type: String
+            type: []
         },
         username: {
-            type: String
+            type: []
         },
         number: {
-            type: String
+            type: []
         },
 
     },
     mobile: {
-        type: String
+        type: []
 
     },
     status: {

@@ -1,75 +1,137 @@
-<template lang="pug">
-	aside.nav(:class="{ mini: minimized }")
-		.menu
-			.title {{ "General" | i18n }}
-			ul
-				router-link(tag="li", to="/")
-					a(:title="_('Home')")
-						span.icon
-							i.fa.fa-home
-						span.label {{ "Home" | i18n }}
-
-				router-link(tag="li", to="/counter")
-					a(:title="_('Demo')")
-						span.icon
-							i.fa.fa-tasks
-						span.label {{ "Demo" | i18n }}
-
-				router-link(tag="li", to="/devices")
-					a(:title="_('Devices')")
-						span.icon
-							i.fa.fa-tablet
-						span.label {{ "Devices" | i18n }}
-
-				router-link(tag="li", to="/posts")
-					a(:title="_('Posts')")
-						span.icon
-							i.fa.fa-comments
-						span.label {{ "Posts" | i18n }}
-				router-link(tag="li", to="/moneyflows")
-					a(:title="_('Moneyflow')")
-						span.icon
-							i.fa.fa-comments
-						span.label {{ "머니" | i18n }}
-				router-link(tag="li", to="/charge")
-					a(:title="_('Charge')")
-						span.icon
-							i.fa.fa-comments
-						span.label {{ "차지" | i18n }}
-				router-link(tag="li", to="/exchange")
-					a(:title="_('Exchange')")
-						span.icon
-							i.fa.fa-comments
-						span.label {{ "익스체인지" | i18n }}
-
-			.title {{ "Profile" | i18n }}
-			ul
-				li
-					a(href="/", :title="_('Logout')")
-						span.icon
-							i.fa.fa-sign-out
-						span.label {{ "Logout" | i18n }}
-
-		.footer
-			.social
-				a(href="", target="_blank")
-					i.fa.fa-facebook
-				a(href="https://twitter.com/Icebobcsi", target="_blank")
-					i.fa.fa-twitter
-				a(href="https://github.com/icebob/vue-express-mongo-boilerplate", target="_blank")
-					i.fa.fa-github
-			.copyright &copy; Copyright, 2016
+<template>
+    <div class="sidebar" :class="{ mini: minimized }">
+        <el-menu :default-active="onRoutes" class="el-menu-vertical-demo" theme="dark" unique-opened router>
+            <template v-for="item in items">
+                <template v-if="item.subs">
+                    <el-submenu :index="item.index">
+                        <template slot="title"><i :class="item.icon"></i>{{ item.title }}</template>
+                        <el-menu-item v-for="(subItem,i) in item.subs" :key="i" :index="subItem.index">{{ subItem.title }}
+                        </el-menu-item>
+                    </el-submenu>
+                </template>
+                <template v-else>
+                    <el-menu-item :index="item.index">
+                        <i :class="item.icon"></i>{{ item.title }}
+                    </el-menu-item>
+                </template>
+            </template>
+        </el-menu>
+    </div>
 </template>
 
 <script>
-
-	export default {
-		props: [
+    export default {
+        props: [
 			"minimized"
-		]
-	};
-	
+		],
+        data() {
+            return {
+                items: [
+					{
+                        icon: 'el-icon-menu',
+                        index: '1',
+                        title: '게시판관리',
+                        subs: [
+                            {
+                                index: 'board/free',
+                                title: '일반글'
+                            },
+                            {
+                                index: 'board/notice',
+                                title: '공지'
+                            }
+                        ]
+                    },
+                    {
+                        icon: 'el-icon-setting',
+                        index: 'readme',
+                        title: '自述'
+                    },
+                    {
+                        icon: 'el-icon-menu',
+                        index: '2',
+                        title: '表格',
+                        subs: [
+                            {
+                                index: 'basetable',
+                                title: '基础表格'
+                            },
+                            {
+                                index: 'vuetable',
+                                title: 'Vue表格组件'
+                            }
+                        ]
+                    },
+                    {
+                        icon: 'el-icon-date',
+                        index: '3',
+                        title: '表单',
+                        subs: [
+                            {
+                                index: 'baseform',
+                                title: '基本表单'
+                            },
+                            {
+                                index: 'vueeditor',
+                                title: '编辑器'
+                            },
+                            {
+                                index: 'markdown',
+                                title: 'markdown'
+                            },
+                            {
+                                index: 'upload',
+                                title: '文件上传'
+                            }
+                        ]
+                    },
+                    {
+                        icon: 'el-icon-star-on',
+                        index: 'charge',
+                        title: '차지'
+                    },
+                    {
+                        icon: 'el-icon-upload2',
+                        index: 'Moneyflow',
+                        title: '머니플로'
+                    },
+                    {
+                        icon: 'el-icon-upload2',
+                        index: 'Posts',
+                        title: '포스트'
+                    },
+                    {
+                        icon: 'el-icon-upload2',
+                        index: 'drag',
+                        title: '拖拽'
+                    },
+                    {
+                        icon: 'el-icon-upload2',
+                        index: 'drag',
+                        title: '拖拽'
+                    }
+                ]
+            }
+        },
+        computed:{
+            onRoutes(){
+                return this.$route.path.replace('/','');
+            }
+        }
+    }
 </script>
 
-<style lang="scss">
+<style scoped>
+    .sidebar{
+        display: block;
+        position: absolute;
+        width: 250px;
+        left: 0;
+        top: 70px;
+        bottom:0;
+        background: #2E363F;
+    }
+    .sidebar > ul {
+        height:100%;
+    }
 </style>
